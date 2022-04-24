@@ -2,6 +2,9 @@
 	<div :class="{ 'icon-loading': loading }">
 		<div v-show="!loading">
 			<h3>{{ t('customproperties', 'Custom Properties') }}</h3>
+			<div><span style="color: #999;">File ID:</span> {{fileId}}</div>
+			<div><span style="color: #999;">Uploader ID:</span> {{uploaderId}}</div>
+			<br>
 			<PropertyList :properties="properties.knownProperties" @propertyChanged="updateProperty($event)" />
 			<EmptyPropertiesPlaceholder v-if="properties.knownProperties.length === 0" />
 
@@ -41,6 +44,8 @@ export default {
 				knownProperties: [],
 				otherProperties: [],
 			},
+			fileId: null,
+			uploaderId: null,
 		}
 	},
 	async mounted() {
@@ -79,7 +84,8 @@ export default {
 							...property,
 						}
 					})
-
+				this.fileId = this.fileInfo_.id
+				this.uploaderId = getCurrentUser().uid
 				this.loading = false
 			}
 		},

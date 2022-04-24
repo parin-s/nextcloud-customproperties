@@ -5,6 +5,22 @@ import SidebarTab from './views/sidebar/SidebarTab'
 import TabContent from './views/sidebar/TabContent'
 
 window.addEventListener('DOMContentLoaded', () => {
+	const FilesPlugin = {
+		attach(fileList) {
+			fileList.registerMultiSelectFileAction({
+				name: 'updatecustomprop',
+				displayName: 'Update custom properties',
+				iconClass: 'icon-edit',
+				order: 20,
+				action: (files) => {
+					alert(files)
+				}
+			})
+		}
+	}
+
+	OC.Plugins.register('OCA.Files.FileList', FilesPlugin)
+
 	if (OCA.Files && OCA.Files.Sidebar) {
 		let tab
 

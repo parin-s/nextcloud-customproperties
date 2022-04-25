@@ -2,12 +2,32 @@
 	<div :class="{ 'icon-loading': loading }">
 		<div v-show="!loading">
 			<h3>{{ t('customproperties', 'Custom Properties') }}</h3>
-			<div><span style="color: #999;">File ID:</span> {{fileId}}</div>
-			<div><span style="color: #999;">Uploader ID:</span> {{uploaderId}}</div>
-			<br>
+			<div class="customproperty-form-group">
+				<label for='property_file_id'>File ID:</label>
+				<div class="customproperty-input-group">
+					<input :id='property_file_id'
+						v-model="fileId"
+						:aria-disabled="true"
+						:disabled="true"
+						name="file_id"
+						type="text"
+						class="customproperty-form-control">
+				</div>
+			</div>
+			<div class="customproperty-form-group">
+				<label for='property_uploader_id'>Uploader ID:</label>
+				<div class="customproperty-input-group">
+					<input :id='property_uploader_id'
+						v-model="uploaderId"
+						:aria-disabled="true"
+						:disabled="true"
+						name="uploader_id"
+						type="text"
+						class="customproperty-form-control">
+				</div>
+			</div>
 			<PropertyList :properties="properties.knownProperties" @propertyChanged="updateProperty($event)" />
 			<EmptyPropertiesPlaceholder v-if="properties.knownProperties.length === 0" />
-
 			<template v-if="properties.otherProperties.length > 0">
 				<h3>{{ t('customproperties', 'WebDAV properties') }}</h3>
 				<PropertyList :disabled="true" :properties="properties.otherProperties" />
@@ -84,6 +104,7 @@ export default {
 							...property,
 						}
 					})
+
 				this.fileId = this.fileInfo_.id
 				this.uploaderId = getCurrentUser().uid
 				this.loading = false

@@ -92,6 +92,9 @@ window.addEventListener('DOMContentLoaded', () => {
 								for (let prop of properties) {
 									const element = document.querySelector(`#property-${prop.propertyname}`)
 									const value = element.value
+									if (value == '') {
+										continue
+									}
 									await this.updateProperty(prop, file, value, userId);
 								}
 							}

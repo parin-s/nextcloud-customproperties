@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from 'vue'
 import { translate, translatePlural } from '@nextcloud/l10n'
 
@@ -5,22 +6,6 @@ import SidebarTab from './views/sidebar/SidebarTab'
 import TabContent from './views/sidebar/TabContent'
 
 window.addEventListener('DOMContentLoaded', () => {
-	const FilesPlugin = {
-		attach(fileList) {
-			fileList.registerMultiSelectFileAction({
-				name: 'updatecustomprop',
-				displayName: 'Update custom properties',
-				iconClass: 'icon-edit',
-				order: 20,
-				action: (files) => {
-					alert(files)
-				}
-			})
-		}
-	}
-
-	OC.Plugins.register('OCA.Files.FileList', FilesPlugin)
-
 	if (OCA.Files && OCA.Files.Sidebar) {
 		let tab
 
@@ -67,5 +52,22 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 
 		OCA.Files.Sidebar.registerTab(tab)
+
+		const FilesPlugin = {
+			attach(fileList) {
+				fileList.registerMultiSelectFileAction({
+					name: 'updatecustomprop',
+					displayName: 'Update custom properties',
+					iconClass: 'icon-edit',
+					order: 20,
+					action: (files) => {
+						// call vue modal here
+						vm.$refs.custompropsarr.update()
+					}
+				})
+			}
+		}
+
+		OC.Plugins.register('OCA.Files.FileList', FilesPlugin)
 	}
 })

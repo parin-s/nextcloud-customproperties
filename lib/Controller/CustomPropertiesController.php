@@ -91,4 +91,15 @@ class CustomPropertiesController extends Controller
         return $this->customPropertiesMapper->delete($customProperty);
     }
 
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     * @param int $id
+     * @return UID of file owner
+     */
+    public function owner(int $id)
+    {
+        $file = \OC::$server->getRootFolder()->getById($id);
+        return $file[0]->getOwner()->getUID();
+    }
 }

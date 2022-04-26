@@ -32,6 +32,9 @@ class CustomPropertiesSabreServerPlugin extends ServerPlugin
      */
     private $customPropertyDefinitions;
 
+
+    private $logger;
+
     /**
      * CustomPropertiesSabreServerPlugin constructor.
      * @param PropertyService $propertyService
@@ -75,7 +78,8 @@ class CustomPropertiesSabreServerPlugin extends ServerPlugin
     public function propFind(PropFind $propFind, INode $node)
     {
         if ($node instanceof Node) {
-            $path = "files" . DIRECTORY_SEPARATOR . \OC_User::getUser() . $node->getPath();
+            $path = $node->getFileId();
+
 
             if ($propFind->isAllProps()) {
                 $this->handlePropFindAllProps($propFind, $path);
@@ -100,13 +104,16 @@ class CustomPropertiesSabreServerPlugin extends ServerPlugin
             return;
         }
 
-        $propPatch->handle($this->getCustomPropertynames(), function ($a) use ($path) {
+        $propPatch->handle($this->getCustomPropertynames(), function ($a) use ($node) {
             try {
                 foreach ($a as $key => $value) {
+                    $property = $this->getPropByName($key);
+                    $field_id = $node->getFileId();
+                   
                     if (!empty(trim($value))) {
-                        $this->propertyService->upsertProperty($path, $key, $value, $this->userId);
+                        $this->propertyService->upsertProperty($field_id, $key, $value, "");
                     } else {
-                        $this->propertyService->deleteProperty($path, $key, $this->userId);
+                        $this->propertyService->deleteProperty($field_id, $key, "");
                     }
                 }
                 return true;
@@ -122,8 +129,10 @@ class CustomPropertiesSabreServerPlugin extends ServerPlugin
      */
     private function handlePropFindAllProps(PropFind $propFind, string $path): void
     {
-        foreach ($this->getCustomPropertynames() as $propertyname) {
-            $entity = $this->propertyService->getCustomProperty($path, $propertyname, $this->userId);
+        foreach ($this->getCustomPropertynames() as $property) {       
+            $propertyname = $property;
+
+            $entity = $this->propertyService->getCustomProperty($path, $propertyname, "");
             $value = $entity === null ? null : $entity->propertyvalue;
 
             $propFind->set($propertyname, $value);
@@ -136,10 +145,26 @@ class CustomPropertiesSabreServerPlugin extends ServerPlugin
      */
     private function handlePropFind(PropFind $propFind, string $path): void
     {
-        foreach ($this->getCustomPropertynames() as $propertyname) {
-            $propFind->handle($propertyname, function () use ($path, $propertyname) {
-                return $this->propertyService->getCustomProperty($path, $propertyname, $this->userId);
+        foreach ($this->getCustomPropertynames() as $property) {
+            $propertyname = $property;
+
+            $propFind->handle($property->propertyname, function () use ($path, $property, $propertyname) {
+                return $this->propertyService->getCustomProperty($path, $propertyname, "");
             });
+        }
+    }
+
+    private function getPropByName(string $name): ?CustomProperty
+    {
+        $property = current(array_filter($this->customPropertyDefinitions, function ($elem) use ($name) {
+            return "{" . Application::NAMESPACE_URL . "}" . $elem->propertyname === $name;
+        }));
+
+        if ($property === false) {
+            return null;
+        }
+        else {
+            return $property;
         }
     }
 }

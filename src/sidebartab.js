@@ -88,14 +88,20 @@ window.addEventListener('DOMContentLoaded', () => {
 								return
 							}
 
-							for (let file of files) {
-								for (let prop of properties) {
-									const element = document.querySelector(`#property-${prop.propertyname}`)
-									const value = element.value
-									if (value == '') {
-										continue
+							for (let prop of properties) {
+								const element = document.querySelector(`#property-${prop.propertyname}`)
+								const value = element.value
+								if (value == '') {
+									continue
+								}
+								prop.value = value
+							}
+
+							for (let prop of properties) {
+								if (prop.value !== undefined) {
+									for (let file of files) {
+										await this.updateProperty(prop, file, prop.value, userId);
 									}
-									await this.updateProperty(prop, file, value, userId);
 								}
 							}
 						}).then(this.enhancePrompt)

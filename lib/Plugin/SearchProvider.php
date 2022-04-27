@@ -110,11 +110,14 @@ class SearchProvider implements IProvider
       
             try {
                 $node = $userFolder->getById($path);
-                $node = $node[0];
-                return new CustomPropertySearchResult(
-                    $node,
-                    $result
-                );
+                if(count($node)>0){
+                    $node = $node[0];
+                    return new CustomPropertySearchResult(
+                        $node,
+                        $result
+                    );
+                }
+                return null;
             } catch (NotFoundException $e) {
                 return null;
             }

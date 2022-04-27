@@ -16,7 +16,7 @@
           />
         </div>
       </div>
-      <div class="customproperty-form-group">
+      <!-- <div class="customproperty-form-group">
         <label for="property_uploader_id">Uploader ID</label>
         <div class="customproperty-input-group">
           <input
@@ -29,7 +29,7 @@
             class="customproperty-form-control"
           />
         </div>
-      </div>
+      </div> -->
       <PropertyList
         :properties="properties.knownProperties"
         @propertyChanged="updateProperty($event)"
@@ -166,10 +166,11 @@ export default {
     },
     async updateProperty(property) {
       const uid = getCurrentUser().uid;
-      const path = `/files/${uid}/${this.fileInfo_.path}/${this.fileInfo_.name}`.replace(
-        /\/+/gi,
-        "/"
-      );
+      const path =
+        `/files/${uid}/${this.fileInfo_.path}/${this.fileInfo_.name}`.replace(
+          /\/+/gi,
+          "/"
+        );
       const url = generateRemoteUrl("dav") + path;
       const propTag = `${property.prefix}:${property.propertyname}`;
       try {

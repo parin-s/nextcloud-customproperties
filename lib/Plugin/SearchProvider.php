@@ -92,23 +92,25 @@ class SearchProvider implements IProvider
             $properties = $this->propertiesMapper->findByPropertyNameLikeAndPropertyValueLike(
                 $propertyname,
                 $propertyvalue,
-                $user->getUID(),
+                "",
                 (int)$query->getCursor(),
                 $query->getLimit()
             );
         } else {
             $properties = $this->propertiesMapper->findByPropertyValueLike(
                 $searchTerm,
-                $user->getUID(),
+                "",
                 (int)$query->getCursor(),
                 $query->getLimit()
             );
         }
 
         $files = array_map(function ($result) use ($user, $userFolder) {
-            $path = str_replace("files/" . $user->getUID(), '', $result->propertypath);
+            $path = $result->propertypath;
+      
             try {
-                $node = $userFolder->get($path);
+                $node = $userFolder->getById($path);
+                $node = $node[0];
                 return new CustomPropertySearchResult(
                     $node,
                     $result
